@@ -50,7 +50,8 @@ while game:
             game = False
     if finish != True:
         window.fill(back)
-
+        raket1.update_l()
+        raket2.update_r()
 
 
     raket1.reset()
