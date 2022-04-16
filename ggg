@@ -9,6 +9,7 @@ class GameSprite(sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = player_x
         self.rect.y = player_y
+
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
@@ -24,9 +25,9 @@ class Player(GameSprite):
     def update_l(self):
         keys = key.get_pressed()
         if keys[K_w] and self.rect.x > 5:
-            self.rect.y += self.speed
-        if keys[K_s] and self.rect.x < 500 - 80:
             self.rect.y -= self.speed
+        if keys[K_s] and self.rect.x < 500 - 80:
+            self.rect.y += self.speed
 
 
 finish = False
@@ -40,7 +41,18 @@ ball = GameSprite("222.png", 200, 200, 50, 50, 4)
 
 window = display.set_mode((500, 500))
 
+width = 500
+height = 500
 
+
+
+speed_x = 3
+speed_y = 3
+
+font.init()
+lose1 = font.Font (None, 46).render("Россия победила!", True, (0, 0, 0))
+
+lose2 = font.Font (None, 46).render("Победила Россия!", True, (0, 0, 0))
 
 
 
@@ -53,10 +65,24 @@ while game:
         raket1.update_l()
         raket2.update_r()
 
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+        if ball.rect.y < 0 or ball.rect.y > height - ball.rect.height:
+            speed_y *= -1
 
-    raket1.reset()
-    raket2.reset()
-    ball.reset()
+        if sprite.collide_rect(ball, raket1) or sprite.collide_rect(ball, raket2) :
+            speed_x *= -1
+
+        if ball.rect.x < 0:
+            finish = True
+            window.blit(lose1, (120, 240))
+        if ball.rect.x > width - ball.rect.width:
+            window.blit(lose2, (120, 240))
+            finish = True
+
+        raket1.reset()
+        raket2.reset()
+        ball.reset()
 
     display.update()
     clock.tick(FPS)
